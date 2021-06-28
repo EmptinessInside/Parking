@@ -10,10 +10,18 @@
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
         <!-- Styles -->
-
+        <link src="{{ asset('css/app.css')}}" rel="stylesheet">
     </head>
     <body class="antialiased">
-        <div id="app">
+        <header class="shadow pt-4 pr-5 pb-4 pl-5">
+            <div class="">
+                <div class="d-flex">
+                    <div class="w-25 font-weight-bold "><h2>Parking</h2></div>
+                    <div class="w-75"></div>
+                </div>
+            </div>
+        </header>
+        <div id="app" class="mt-5">
             <app-component></app-component>
         </div>
     </body>
