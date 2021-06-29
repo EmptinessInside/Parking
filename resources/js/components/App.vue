@@ -1,41 +1,43 @@
 <template>
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-md-10">
-                <div>
-                    <div class="card mb-2">
-                        <div class="card-body d-flex align-items-center justify-content-center">
-                            <p class="col-3 mb-0 ml-4">fio</p>
-                            <p class="col-3 mb-0">auto</p>
-                            <p class="col-2 text-center mb-0">number</p>
-                            <div class="col-4 text-right">
-                                <button class="btn btn-primary">Редактировать</button>
-                                <button class="btn btn-danger ml-2">Удалить</button>
-                            </div>
-                        </div>
+    <div>
+        <div>
+            <h1>Все клиенты</h1>
+        </div>
+        <div class="mb-4 text-right">
+            <button class="btn btn-primary" @click="createClient">+ Добавить клиента</button>
+        </div>
+        <div>
+            <div class="card mb-2">
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <p class="col-3 mb-0 ml-4">fio</p>
+                    <p class="col-3 mb-0">auto</p>
+                    <p class="col-2 text-center mb-0">number</p>
+                    <div class="col-4 text-right">
+                        <button class="btn btn-primary">Редактировать</button>
+                        <button class="btn btn-danger ml-2">Удалить</button>
                     </div>
+                </div>
+            </div>
 
-                    <div class="card mb-2">
-                        <div class="card-body d-flex align-items-center justify-content-center">
-                            <p class="col-3 mb-0 ml-4">fio</p>
-                            <p class="col-3 mb-0">auto</p>
-                            <p class="col-2 text-center mb-0">number</p>
-                            <div class="col-4 text-right">
-                                <button class="btn btn-primary">Редактировать</button>
-                                <button class="btn btn-danger ml-2">Удалить</button>
-                            </div>
-                        </div>
+            <div class="card mb-2">
+                <div class="card-body d-flex align-items-center justify-content-center">
+                    <p class="col-3 mb-0 ml-4">fio</p>
+                    <p class="col-3 mb-0">auto</p>
+                    <p class="col-2 text-center mb-0">number</p>
+                    <div class="col-4 text-right">
+                        <button class="btn btn-primary">Редактировать</button>
+                        <button class="btn btn-danger ml-2">Удалить</button>
                     </div>
                 </div>
-                <div id="pagination">
-                    <div class="d-flex align-items-center">
-                        <div class="mr-2 pagination__btn pagination__btn-prev">Назад</div>
-                        <div class="mr-2 pagination__btn-number">4</div>
-                        <div class="mr-2 pagination__btn-number pagination__btn-number__active">5</div>
-                        <div class="mr-2 pagination__btn-number">6</div>
-                        <div class="pagination__btn pagination__btn-next">Вперед</div>
-                    </div>
-                </div>
+            </div>
+        </div>
+        <div id="pagination">
+            <div class="d-flex align-items-center">
+                <div class="mr-2 pagination__btn pagination__btn-prev">Назад</div>
+                <div class="mr-2 pagination__btn-number">4</div>
+                <div class="mr-2 pagination__btn-number pagination__btn-number__active">5</div>
+                <div class="mr-2 pagination__btn-number">6</div>
+                <div class="pagination__btn pagination__btn-next">Вперед</div>
             </div>
         </div>
     </div>
@@ -48,6 +50,10 @@
         },
 
         methods : {
+
+            createClient(){
+                this.$router.push('/create_client');
+            },
 
             editClient(record_id){
 

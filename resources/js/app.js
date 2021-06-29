@@ -3,12 +3,17 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
-import BootstrapVue from 'bootstrap-vue'
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue/dist/bootstrap-vue.css'
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+
+import AppComponent from './components/App';
+import ClientCompomemt from './components/client/Client';
+import ClientForm from "./components/client/ClientForm";
+import CarForm from "./components/client/CarForm";
 
 require('./bootstrap');
 
@@ -29,6 +34,31 @@ window.Vue = require('vue').default;
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('app-component', require('./components/App.vue').default);
+Vue.component('client_form', require('./components/client/ClientForm').default);
+Vue.component('car_form', require('./components/client/CarForm').default);
+
+const routes = [
+    { path: '/', component: AppComponent },
+    { path : '/create_client', component : ClientCompomemt , children: [
+            {
+                path: 'client_form',
+                components : {
+                    client_form : ClientForm
+                },
+            },
+            {
+                path: 'car_form',
+                components : {
+                    car_form : CarForm
+                },
+            },
+        ]},
+
+]
+
+const router = new VueRouter({
+    routes
+})
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -38,4 +68,5 @@ Vue.component('app-component', require('./components/App.vue').default);
 
 const app = new Vue({
     el: '#app',
+    router
 });

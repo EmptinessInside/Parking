@@ -16,3 +16,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('index');
 });
+
+Route::post('/create_client', [\App\Http\Controllers\ClientController::class, 'store']);

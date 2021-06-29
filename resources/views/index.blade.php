@@ -12,6 +12,17 @@
         <!-- Styles -->
         <link src="{{ asset('css/app.css')}}" rel="stylesheet">
     </head>
+    <style>
+        .fade-enter-active {
+            transition: opacity .5s;
+        }
+        .fade-leave-active{
+            transition: opacity .3s;
+        }
+        .fade-enter, .fade-leave-to {
+            opacity: 0;
+        }
+    </style>
     <body class="antialiased">
         <header class="shadow pt-4 pr-5 pb-4 pl-5">
             <div class="">
@@ -22,7 +33,15 @@
             </div>
         </header>
         <div id="app" class="mt-5">
-            <app-component></app-component>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-8 offset-2">
+                        <transition name="fade" mode="out-in">
+                            <router-view></router-view>
+                        </transition>
+                    </div>
+                </div>
+            </div>
         </div>
     </body>
 </html>
