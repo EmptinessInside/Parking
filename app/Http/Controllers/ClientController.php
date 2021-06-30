@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClientPersonalDataPostRequest;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
+
     public function store(Request $request){
-        //Валидация данных
+        //Валидация данных пользователя
 
         $customErrorMessages = [
             'required' => 'Поле :attribute обязательно для заполнения.',
@@ -30,7 +32,6 @@ class ClientController extends Controller
             'address' => 'адрес'
         ];
 
-
         $validator = Validator::make(
             $request->all(),
             [
@@ -45,7 +46,10 @@ class ClientController extends Controller
             $attributes
         );
 
-        if ( $validator->fails() ) {
+        //Валидация данных о машинах
+
+        //Возвращение ответа об ошибке
+        if ( !empty($validator->fails()) ) {
             $errors = $validator->messages();
 
             return response()->json([
@@ -64,6 +68,11 @@ class ClientController extends Controller
         $client_data['address'] = strip_tags(addslashes(htmlspecialchars($request->address)));
 
         $client = new Client();
-        return $client->createClient($client_data);
+
+        $client_data_response = $client->createClient($client_data);
+        //Тут надо создать машины в цикле
+        //Тут надо связать машину с человеком
+
+        return $client_data_response;
     }
 }

@@ -5,6 +5,7 @@
  */
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import Multiselect from 'vue-multiselect';
 
 import BootstrapVue from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -32,6 +33,8 @@ window.Vue = require('vue').default;
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+
+Vue.component('multiselect', Multiselect);
 
 Vue.component('app-component', require('./components/App.vue').default);
 Vue.component('client_form', require('./components/client/ClientForm').default);
