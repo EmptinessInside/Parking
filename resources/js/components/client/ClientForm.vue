@@ -9,43 +9,46 @@
             <p class="mb-0">{{success_message}}</p>
         </div>
         <div class="d-flex">
-            <div class="d-flex col-4">
-                <p class="mb-0 align-self-center form-field__item-name">Фамилия</p>
-                <input class="form-control ml-2" v-model="form.second_name" required/>
-            </div>
-            <div class="d-flex col-4 pl-4">
-                <p class="mb-0 align-self-center form-field__item-name">Имя</p>
-                <input class="form-control ml-2" v-model="form.first_name" required/>
-            </div>
-            <div class="d-flex col-4 pl-4">
-                <p class="mb-0 align-self-center form-field__item-name">Отчество</p>
-                <input class="form-control ml-2" v-model="form.third_name"/>
-            </div>
-        </div>
-        <div class="d-flex mt-4">
-            <div class="d-flex col-2">
-                <p class="mb-0 align-self-center form-field__item-name">Пол</p>
-                <div class="pl-4 d-flex">
-                    <div class="d-flex align-items-center">
-                        <p class="mb-0">М</p>
-                        <input type="radio" class="form-control ml-2 form-field__item-radio" value="0" id="gender_m" v-model="form.gender"/>
-                    </div>
-                    <div class="d-flex align-items-center pl-2">
-                        <p class="mb-0">Ж</p>
-                        <input type="radio" class="form-control ml-2 form-field__item-radio" value="1" id="gender_w" v-model="form.gender" />
-                    </div>
+            <div class="d-flex flex-column col-6">
+                <div class="d-flex">
+                    <p class="mb-0 align-self-center form-field__item-name w-25">Фамилия</p>
+                    <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.second_name != undefined && errors.second_name.length > 0}" v-model="form.second_name" required/>
+                </div>
+                <div class="d-flex mt-2">
+                    <p class="mb-0 align-self-center form-field__item-name w-25">Имя</p>
+                    <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.first_name != undefined && errors.first_name.length > 0}" v-model="form.first_name" required/>
+                </div>
+                <div class="d-flex mt-2">
+                    <p class="mb-0 align-self-center form-field__item-name w-25">Отчество</p>
+                    <input class="form-control ml-2 w-75" v-model="form.third_name"/>
                 </div>
             </div>
-            <div class="d-flex col-4 pl-4">
-                <p class="mb-0 align-self-center form-field__item-name">Телефон</p>
-                <input class="form-control ml-2" v-model="form.phone" required/>
-            </div>
-            <div class="d-flex col-6 pl-4">
-                <p class="mb-0 align-self-center form-field__item-name">Адрес</p>
-                <input class="form-control ml-2" v-model="form.address" required/>
+            <div class="d-flex flex-column col-6">
+                <div class="d-flex form-field__radio-size">
+                    <p class="mb-0 align-self-center form-field__item-name w-25">Пол</p>
+                    <div class="d-flex w-75">
+                        <div class="d-flex align-items-center">
+                            <p class="mb-0">М</p>
+                            <input type="radio" class="form-control ml-2 form-field__item-radio" value="0" id="gender_m" v-model="form.gender"/>
+                        </div>
+                        <div class="d-flex align-items-center pl-2">
+                            <p class="mb-0">Ж</p>
+                            <input type="radio" class="form-control ml-2 form-field__item-radio" value="1" id="gender_w" v-model="form.gender" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex mt-2">
+                    <p class="mb-0 align-self-center form-field__item-name w-25">Телефон</p>
+                    <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.phone != undefined && errors.phone.length > 0}" v-model="form.phone" required/>
+                </div>
+                <div class="d-flex mt-2">
+                    <p class="mb-0 align-self-center form-field__item-name w-25">Адрес</p>
+                    <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.address != undefined && errors.address.length > 0}" v-model="form.address" required/>
+                </div>
             </div>
         </div>
-        <button @click="btnReactionSwitcher">Сохранить</button>
+        <button class="btn btn-primary mt-4" @click="btnReactionSwitcher">Сохранить</button>
     </div>
 </template>
 
@@ -119,6 +122,10 @@ export default {
 </script>
 
 <style scoped>
+    .form-field__radio-size{
+        height: 38px;
+    }
+
     .form-field__item-name{
         font-size: 18px;
     }

@@ -1,5 +1,6 @@
 <template>
 <div>
+    <h1 class="mb-4">Добавление клиента</h1>
     <client_form
         @savedClientPersonalData="getAssessToAddCars"
     ></client_form>
