@@ -1,5 +1,13 @@
 <template>
     <div>
+        <div class="alert alert-danger" v-if="errors" >
+            <div v-for="category in errors">
+                <p class="mb-0" v-for="error in category">{{error}}</p>
+            </div>
+        </div>
+        <div class="alert alert-success" v-if="success_added">
+            <p class="mb-0">{{success_message}}</p>
+        </div>
         <div class="d-flex">
             <div class="d-flex col-4">
                 <p class="mb-0 align-self-center form-field__item-name">Фамилия</p>
@@ -37,7 +45,7 @@
                 <input class="form-control ml-2" v-model="form.address" required/>
             </div>
         </div>
-        <button @click="saveClientPersonalData">Сохранить</button>
+        <button @click="btnReactionSwitcher">Сохранить</button>
     </div>
 </template>
 
@@ -54,12 +62,20 @@ export default {
                 gender : 0,
                 phone : null,
                 address : null
-            }
+            },
+            errors : null,
+            success_added : false,
+            success_message : 'Клиент успешно добавлен! Теперь вы можете добавить к клиенту его машины.',
+            component_mode : 'create',
+
+
         }
     },
 
     mounted() {
-
+        if(this.component_mode == 'edit'){
+            this.success_message = 'Клиент успешно отредактирован!'
+        }
     },
 
     methods : {
@@ -70,15 +86,32 @@ export default {
                     if(response.data.success) {
                         //Отправка события об успешном добавлении пользователя
                         this.$emit('savedClientPersonalData', );
+                        this.errors = null;
+                        this.success_added = true;
+                        this.component_mode = 'edit';
                     }
                     else{
-                        console.log(response.data.errors)
+                        this.errors = response.data.errors;
                     }
 
             });
+        },
 
+        editClientPersonalData(){
+          //редактирование клиента
+        },
 
+        btnReactionSwitcher(){
+            //Переключение поведения компонента
+            switch (this.component_mode){
+                case 'create' : {
+                    this.saveClientPersonalData()
+                }
 
+                case 'edit' : {
+                    this.editClientPersonalData();
+                }
+            }
         }
     }
 

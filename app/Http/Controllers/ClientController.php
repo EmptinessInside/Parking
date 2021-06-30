@@ -15,7 +15,10 @@ class ClientController extends Controller
             'required' => 'Поле :attribute обязательно для заполнения.',
             'between:0,1' => 'Поле :attribute должно иметь значение от 0 до 1000000 символов.',
             'max' => 'Максимальная длина поля :attribute дожна быть не больше :max.',
-            'integer' => 'Поле :attribute должно быть числом.'
+            'integer' => 'Поле :attribute должно быть числом.',
+            'unique' => 'Данный :attribute уже зарегистрирован в системе.',
+            'string' => 'Поле :attribute должно быть строкой.',
+            'size' => 'Поле :attribute должно иметь длину :size.'
         ];
 
         $attributes = [
