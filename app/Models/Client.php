@@ -23,7 +23,7 @@ class Client extends Model
         $errors = null;
 
         try{
-            DB::table('clients')->insert([
+            $id = DB::table('clients')->insertGetId([
                 'first_name' => $client_data->first_name,
                 'second_name' => $client_data->second_name,
                 'third_name' => $client_data->third_name,
@@ -36,8 +36,12 @@ class Client extends Model
             //Ошибка запроса
             $success = false;
             $errors = [
-                'Query error!'
+                'query' => 'Query error!'
             ];
+        }
+
+        if($success){
+            $response_data = json_encode( array('client_id' => $id) );
         }
 
         return response()->json([

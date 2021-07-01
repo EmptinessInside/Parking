@@ -4,9 +4,9 @@
     <div>
         <h3 class="mb-4 mt-5">Персональные данные</h3>
         <div>
-            <div class="alert alert-danger" v-if="errors" >
-                <div v-for="category in errors">
-                    <p class="mb-0" v-for="error in category">{{error}}</p>
+            <div class="alert alert-danger" v-if="errors != null && errors.client != undefined && errors.client" >
+                <div v-for="category in errors.client">
+                    <p class="mb-0" v-for="error_p in category">{{error_p}}</p>
                 </div>
             </div>
             <div class="alert alert-success" v-if="success_added">
@@ -16,11 +16,11 @@
                 <div class="d-flex flex-column col-6 pl-0">
                     <div class="d-flex">
                         <p class="mb-0 align-self-center form-field__item-name w-25">Фамилия</p>
-                        <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.second_name != undefined && errors.second_name.length > 0}" v-model="form.second_name" required/>
+                        <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.client != undefined && errors.client.second_name != undefined && errors.client.second_name.length > 0}" v-model="form.second_name" required/>
                     </div>
                     <div class="d-flex mt-2">
                         <p class="mb-0 align-self-center form-field__item-name w-25">Имя</p>
-                        <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.first_name != undefined && errors.first_name.length > 0}" v-model="form.first_name" required/>
+                        <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.client != undefined && errors.client.first_name != undefined && errors.client.first_name.length > 0}" v-model="form.first_name" required/>
                     </div>
                     <div class="d-flex mt-2">
                         <p class="mb-0 align-self-center form-field__item-name w-25">Отчество</p>
@@ -44,11 +44,11 @@
 
                     <div class="d-flex mt-2">
                         <p class="mb-0 align-self-center form-field__item-name w-25">Телефон</p>
-                        <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.phone != undefined && errors.phone.length > 0}" v-model="form.phone" required/>
+                        <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.client != undefined && errors.client.phone != undefined && errors.client.phone.length > 0}" v-model="form.phone" required/>
                     </div>
                     <div class="d-flex mt-2">
                         <p class="mb-0 align-self-center form-field__item-name w-25">Адрес</p>
-                        <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.address != undefined && errors.address.length > 0}" v-model="form.address" required/>
+                        <input class="form-control ml-2 w-75" v-bind:class="{'is-invalid' : errors != null && errors.client != undefined && errors.client.address != undefined && errors.client.address.length > 0}" v-model="form.address" required/>
                     </div>
                 </div>
             </div>
@@ -56,6 +56,19 @@
     </div>
     <div>
         <h3 class="mb-4 mt-5">Данные авто</h3>
+        <div class="alert alert-danger" v-if="errors != null && errors.cars != undefined && errors.cars.length > 0">
+            <p class="mb-0" v-for="(car_error, index) in errors.cars">
+                Проверьте правильность заполнения данных в автомобиле # {{ parseInt(index) + 1}}
+            </p>
+        </div>
+        <div class="alert alert-danger" v-if="errors != null && errors.cars_duplicate_groups != undefined && errors.cars_duplicate_groups.length > 0">
+            <p class="mb-0" v-for="(cars_duplicate_group, index) in errors.cars_duplicate_groups">
+                Найдены дубликаты гос. номеров в автомобилях:
+                <span class="d-flex flex-column">
+                    <span v-for="dublicate_car in cars_duplicate_group">#{{parseInt(dublicate_car) + 1}}</span>
+                </span>
+            </p>
+        </div>
         <div class="mt-4 d-flex flex-wrap">
             <div class="col-6 pl-2 pr-2 mb-3 position-relative" v-for="(car,i) in form.cars">
                 <div class="add-car__template flex-column">
@@ -74,7 +87,7 @@
 
                             />
                             -->
-                            <input class="form-control" v-model="form.cars[i].brand" />
+                            <input class="form-control" v-model="form.cars[i].brand" v-bind:class="{'is-invalid' : errors != null && errors.cars != undefined && errors.cars[i] != undefined  && errors.cars[i].brand != undefined && errors.cars[i].brand.length > 0}" />
                             <p class="mb-0 mu-title">Марка</p>
                         </div>
                         <div class="col-6">
@@ -90,17 +103,17 @@
                                 :close-on-select="true"
                             />
                             -->
-                            <input class="form-control" v-model="form.cars[i].model" />
+                            <input class="form-control" v-model="form.cars[i].model" v-bind:class="{'is-invalid' : errors != null && errors.cars != undefined && errors.cars[i] != undefined  && errors.cars[i].model != undefined && errors.cars[i].model.length > 0}"/>
                             <p class="mb-0 mu-title">Модель</p>
                         </div>
                     </div>
                     <div class="d-flex w-100 justify-content-center mt-4">
                         <div class="col-6">
-                            <input class="form-control" v-model="form.cars[i].color" />
+                            <input class="form-control" v-model="form.cars[i].color" v-bind:class="{'is-invalid' : errors != null && errors.cars != undefined && errors.cars[i] != undefined  && errors.cars[i].color != undefined && errors.cars[i].color.length > 0}"/>
                             <p class="mb-0 mu-title">Цвет кузова</p>
                         </div>
                         <div class="col-6">
-                            <input class="form-control" v-model="form.cars[i].license_plate"/>
+                            <input class="form-control" v-model="form.cars[i].license_plate" v-bind:class="{'is-invalid' : errors != null && errors.cars != undefined && errors.cars[i] != undefined  && errors.cars[i].license_plate != undefined && errors.cars[i].license_plate.length > 0 || errors != null && errors.cars_duplicate_numbers != null && errors.cars_duplicate_numbers.indexOf(i) != -1}"/>
                             <p class="mb-0 mu-title">Гос Номер РФ</p>
                         </div>
                     </div>
@@ -172,26 +185,36 @@ export default {
     },
 
     methods : {
-        saveClientPersonalData(){
-            //Отправка данных на запись
+
+        saveClient(){
+            this.success_added = false;
+            this.errors = null;
+
             axios.post('/create_client', this.form)
                 .then( response=>{
                     if(response.data.success) {
                         //Отправка события об успешном добавлении пользователя
                         this.$emit('savedClientPersonalData', );
-                        this.errors = null;
-                        this.success_added = true;
-                        this.component_mode = 'edit';
+                        this.$router.push('/');
                     }
                     else{
                         this.errors = response.data.errors;
+
+                        console.log(this.errors)
+
+                        if(this.errors != null && this.errors.cars_duplicate_groups != undefined && this.errors.cars_duplicate_groups.length > 0){
+
+                            let dublicates_arr = [];
+
+                            $.each(this.errors.cars_duplicate_groups, (index) =>{
+                                dublicates_arr = dublicates_arr.concat(this.errors.cars_duplicate_groups[index]);
+                            });
+
+                            this.errors.cars_duplicate_numbers = dublicates_arr;
+                        }
                     }
 
                 });
-        },
-
-        saveClient(){
-
         },
 
         editClientPersonalData(){
@@ -224,6 +247,9 @@ export default {
 
         removeCarTemplate(index){
             this.form.cars.splice(index,1);
+            if( this.errors != null && this.errors.cars != undefined && this.errors.cars[index] != undefined ){
+                this.errors.cars.splice(index,1);
+            }
         }
     }
 }
