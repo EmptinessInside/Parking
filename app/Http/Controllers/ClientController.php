@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ClientPersonalDataPostRequest;
+use App\Repositories\Interfaces\ClientsRepositoryInterface;
 use App\Models\Car;
 use App\Models\Client;
 use Illuminate\Http\Request;
@@ -10,6 +10,29 @@ use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
+
+    private $clientsRepository;
+
+
+    public function __construct(ClientsRepositoryInterface $clientsRepository)
+    {
+        $this->clientsRepository = $clientsRepository;
+    }
+
+    public function index(Request $request){
+
+        $errors = null;
+
+        $offset = (int)$request->offset;
+        $limit = (int)$request->limit;
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->clientsRepository->allInBounds($offset, $limit),
+            'errors' => $errors
+        ]);
+
+    }
 
     public function store(Request $request){
 

@@ -15,6 +15,7 @@ class Client extends Model
      * Создание нового клиента
      *
      * @param  object  $client_data
+     *
      * @return object
      */
     public function createClient($client_data){

@@ -18,3 +18,6 @@ Route::get('/', function () {
 });
 
 Route::post('/create_client', [\App\Http\Controllers\ClientController::class, 'store']);
+Route::post('/clients_list', [\App\Http\Controllers\ClientController::class, 'index']);
+
+Route::get('/get-cars-count', [\App\Http\Controllers\CarController::class, 'CarsCount']);
