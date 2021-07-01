@@ -7,7 +7,7 @@
             <button class="btn btn-primary" @click="createClient">+ Добавить клиента</button>
         </div>
         <div>
-            <div class="card mb-2">
+            <div class="card mb-2" v-for="client in clients">
                 <div class="card-body d-flex align-items-center justify-content-center">
                     <p class="col-3 mb-0 ml-4">fio</p>
                     <p class="col-3 mb-0">auto</p>
@@ -19,24 +19,15 @@
                 </div>
             </div>
 
-            <div class="card mb-2">
-                <div class="card-body d-flex align-items-center justify-content-center">
-                    <p class="col-3 mb-0 ml-4">fio</p>
-                    <p class="col-3 mb-0">auto</p>
-                    <p class="col-2 text-center mb-0">number</p>
-                    <div class="col-4 text-right">
-                        <button class="btn btn-primary">Редактировать</button>
-                        <button class="btn btn-danger ml-2">Удалить</button>
-                    </div>
-                </div>
-            </div>
         </div>
         <div id="pagination">
             <div class="d-flex align-items-center">
                 <div class="mr-2 pagination__btn pagination__btn-prev">Назад</div>
-                <div class="mr-2 pagination__btn-number">4</div>
-                <div class="mr-2 pagination__btn-number pagination__btn-number__active">5</div>
-                <div class="mr-2 pagination__btn-number">6</div>
+                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 0" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == 1}">{{this.pagination.btns.prev_prev}}</div>
+                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 1" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == 2}">{{this.pagination.btns.prev}}</div>
+                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 2" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.btns.cur }">{{this.pagination.btns.cur}}</div>
+                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 3" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.pages - 1 }">{{this.pagination.btns.next}}</div>
+                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 4" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.pages }">{{this.pagination.btns.next_next}}</div>
                 <div class="pagination__btn pagination__btn-next">Вперед</div>
             </div>
         </div>
@@ -45,8 +36,59 @@
 
 <script>
     export default {
+        data(){
+            return {
+                clients : [],
+                errors : null,
+
+                pagination : {
+                    page_item_limit : 10,
+                    pages : 3,
+                    current_page : 2,
+                    btns : {
+                        prev_prev : null,
+                        prev : null,
+                        cur : null,
+                        next : null,
+                        next_next : null
+                    }
+                }
+            }
+        },
+
         mounted() {
 
+            if(this.pagination.current_page > this.pagination.pages)
+                this.pagination.current_page = this.pagination.pages;
+
+            if(this.pagination.current_page <= 5){
+                this.pagination.btns.prev_prev = 1;
+                this.pagination.btns.prev = 2;
+                this.pagination.btns.cur = 3;
+                this.pagination.btns.next = 4;
+                this.pagination.btns.next_next = 5;
+            }
+            else if (this.pagination.pages - this.pagination.current_page >=2){
+                this.pagination.btns.prev_prev = this.pagination.current_page - 2;
+                this.pagination.btns.prev = this.pagination.current_page - 1;
+                this.pagination.btns.cur = this.pagination.current_page;
+                this.pagination.btns.next = this.pagination.current_page + 1;
+                this.pagination.btns.next_next = this.pagination.current_page + 2;
+            }
+            else if (this.pagination.pages - this.pagination.current_page == 1){
+                this.pagination.btns.prev_prev = this.pagination.current_page - 3;
+                this.pagination.btns.prev = this.pagination.current_page - 2;
+                this.pagination.btns.cur = this.pagination.current_page - 1;
+                this.pagination.btns.next = this.pagination.current_page;
+                this.pagination.btns.next_next = this.pagination.current_page + 1;
+            }
+            else if (this.pagination.pages - this.pagination.current_page == 0){
+                this.pagination.btns.prev_prev = this.pagination.current_page - 4;
+                this.pagination.btns.prev = this.pagination.current_page - 3;
+                this.pagination.btns.cur = this.pagination.current_page - 2;
+                this.pagination.btns.next = this.pagination.current_page - 1;
+                this.pagination.btns.next_next = this.pagination.current_page;
+            }
         },
 
         methods : {
