@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h1 class="mb-5">Добавление клиента</h1>
+    <h1 class="mb-5">{{component_title}}</h1>
     <div>
         <h3 class="mb-4 mt-5">Персональные данные</h3>
         <div>
@@ -56,7 +56,7 @@
     </div>
     <div>
         <h3 class="mb-4 mt-5">Данные авто</h3>
-        <div class="alert alert-danger" v-if="errors != null && errors.cars != undefined && errors.cars.length > 0">
+        <div class="alert alert-danger" v-if="errors != null && errors.cars != undefined ">
             <p class="mb-0" v-for="(car_error, index) in errors.cars">
                 Проверьте правильность заполнения данных в автомобиле # {{ parseInt(index) + 1}}
             </p>
@@ -161,6 +161,7 @@ export default {
             success_added : false,
             success_messages : 'Клиент успешно добавлен! Теперь вы можете добавить к клиенту его машины.',
             component_mode : 'create',
+            component_title : 'Добавление клиента',
 
             cars : {
                 models : [
@@ -175,45 +176,19 @@ export default {
             cars_forms : [
 
             ],
-            cars_count : 0
+            cars_count : 0,
+            form_state : {}
         }
     },
 
     mounted() {
-
-
-    },
-
-    created() {
-        if(this.$route.params.client_id){
+        if(this.$route.params.client_id) {
             this.component_mode = 'edit';
+            this.component_title = 'Редактирование клиента'
+            this.getClient();
 
-            axios.post('/get_client_data', { client_id : parseInt(this.$route.params.client_id)})
-                .then(response=>{
-                    if(response.data.success){
-                        this.form.first_name = response.data.data.client_personal_data.first_name;
-                        this.form.second_name = response.data.data.client_personal_data.second_name;
-                        this.form.third_name = response.data.data.client_personal_data.third_name;
-                        this.form.gender = response.data.data.client_personal_data.gender;
-                        this.form.phone = response.data.data.client_personal_data.phone;
-                        this.form.address = response.data.data.client_personal_data.address;
-
-                        this.form.cars.splice(0,1);
-
-                        for(var i=0; i < response.data.data.client_cars.length; i++){
-                            this.form.cars.push({
-                                'brand' : response.data.data.client_cars[i].brand,
-                                'model' : response.data.data.client_cars[i].model,
-                                'color' : response.data.data.client_cars[i].color,
-                                'license_plate' : response.data.data.client_cars[i].license_plate
-                            });
-                        }
-                    }
-                    else{
-                        console.log(response.data.errors);
-                    }
-                });
         }
+
     },
 
     methods : {
@@ -232,8 +207,6 @@ export default {
                     else{
                         this.errors = response.data.errors;
 
-                        console.log(this.errors)
-
                         if(this.errors != null && this.errors.cars_duplicate_groups != undefined && this.errors.cars_duplicate_groups.length > 0){
 
                             let dublicates_arr = [];
@@ -250,15 +223,61 @@ export default {
         },
 
         editClient(){
-            axios.post('/edit_client', this.form)
-            .then(response=>{
-                if(response.data.success){
-                    console.log(response.data)
-                }
-                else{
+                this.success_added = false;
+                this.errors = null;
 
-                }
-            });
+                axios.post('/edit_client', this.form)
+                    .then(response => {
+                        if (response.data.success) {
+                            this.$router.push('/');
+                        } else {
+                            this.errors = response.data.errors;
+
+                            if (this.errors != null && this.errors.cars_duplicate_groups != undefined && this.errors.cars_duplicate_groups.length > 0) {
+
+                                let dublicates_arr = [];
+
+                                $.each(this.errors.cars_duplicate_groups, (index) => {
+                                    dublicates_arr = dublicates_arr.concat(this.errors.cars_duplicate_groups[index]);
+                                });
+
+                                this.errors.cars_duplicate_numbers = dublicates_arr;
+                            }
+                        }
+                    });
+        },
+
+        getClient(){
+
+            axios.post('/get_client_data', { client_id : parseInt(this.$route.params.client_id)})
+                .then(response=>{
+                    if(response.data.success){
+                        this.form.first_name = response.data.data.client_personal_data.first_name;
+                        this.form.second_name = response.data.data.client_personal_data.second_name;
+                        this.form.third_name = response.data.data.client_personal_data.third_name;
+                        this.form.gender = response.data.data.client_personal_data.gender;
+                        this.form.phone = response.data.data.client_personal_data.phone;
+                        this.form.address = response.data.data.client_personal_data.address;
+                        this.form.id = response.data.data.client_personal_data.id;
+
+                        this.form.cars.splice(0,1);
+
+                        for(var i=0; i < response.data.data.client_cars.length; i++){
+                            this.form.cars.push({
+                                'brand' : response.data.data.client_cars[i].brand,
+                                'model' : response.data.data.client_cars[i].model,
+                                'color' : response.data.data.client_cars[i].color,
+                                'license_plate' : response.data.data.client_cars[i].license_plate,
+                                'id' : response.data.data.client_cars[i].id,
+                            });
+                        }
+
+                    }
+                    else{
+                        console.log(response.data.errors);
+                    }
+                });
+
         },
 
         btnReactionSwitcher(){
@@ -283,14 +302,15 @@ export default {
                     'license_plate' : null
                 }
             );
-
-            console.log(this.form.cars)
         },
 
         removeCarTemplate(index){
             this.form.cars.splice(index,1);
+
             if( this.errors != null && this.errors.cars != undefined && this.errors.cars[index] != undefined ){
-                this.errors.cars.splice(index,1);
+                delete this.errors[index];
+                console.log(this.errors.cars);
+                //this.errors.cars.splice(index,1);
             }
         }
     }

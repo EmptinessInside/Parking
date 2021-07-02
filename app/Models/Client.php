@@ -69,7 +69,8 @@ class Client extends Model
                 'third_name',
                 'gender',
                 'phone',
-                'address'
+                'address',
+                'id'
             )
             ->limit(1)
             ->get();
@@ -92,8 +93,76 @@ class Client extends Model
                 'brand',
                 'model',
                 'color',
-                'license_plate'
+                'license_plate',
+                'id'
             )
             ->get();
+    }
+
+    /**
+     * Обновление клиента
+     *
+     * @param  int  $client_id
+     *
+     * @return object
+     */
+    public function updateClient($client_data){
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        try{
+            DB::table('clients')
+                ->where('clients.id','=',(int)$client_data->id)
+                ->update([
+                'first_name' => $client_data->first_name,
+                'second_name' => $client_data->second_name,
+                'third_name' => $client_data->third_name,
+                'gender' => $client_data->gender,
+                'phone' => $client_data->phone,
+                'address' => $client_data->address
+            ]);
+        }
+        catch (QueryException){
+            //Ошибка запроса
+            $success = false;
+            $errors = [
+                'query' => 'Query error!'
+            ];
+        }
+
+        return response()->json([
+            'success' => $success,
+            'data' => $response_data,
+            'errors' => $errors,
+        ]);
+    }
+
+    public function updateClientCars($cars, $client_id){
+
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        DB::table('cars')
+            ->where('owner', '=', $client_id)
+            ->delete();
+
+        foreach ($cars as $car) {
+            DB::table('cars')
+                ->insert([
+                    'brand' => $car['brand'],
+                    'model' => $car['model'],
+                    'color' => $car['color'],
+                    'license_plate' => $car['license_plate'],
+                    'owner' => $client_id
+                ]);
+        }
+
+        return response()->json([
+            'success' => $success,
+            'data' => $response_data,
+            'errors' => $errors,
+        ]);
     }
 }
