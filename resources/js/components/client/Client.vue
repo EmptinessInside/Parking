@@ -120,7 +120,7 @@
 
                 </div>
                 <div class="add-car__template-number">#{{i+1}}</div>
-                <div class="remove-car-template-btn" @click="removeCarTemplate(i)">&#x2718;</div>
+                <div class="remove-car-template-btn" v-if="form.cars.length > 1" @click="removeCarTemplate(i)">&#x2718;</div>
             </div>
 
             <div id="car-add-btn" class="col-6 pl-2 pr-2 mb-3" @click="add_car">
@@ -155,7 +155,7 @@ export default {
                         'color' : null,
                         'license_plate' : null
                     }
-                ]
+                ],
             },
             errors : null,
             success_added : false,
@@ -180,23 +180,40 @@ export default {
     },
 
     mounted() {
+
+
+    },
+
+    created() {
         if(this.$route.params.client_id){
             this.component_mode = 'edit';
 
             axios.post('/get_client_data', { client_id : parseInt(this.$route.params.client_id)})
                 .then(response=>{
                     if(response.data.success){
-                        this.form = response.data.data.client_personal_data;
-                        this.form.cars = response.data.data.client_cars;
+                        this.form.first_name = response.data.data.client_personal_data.first_name;
+                        this.form.second_name = response.data.data.client_personal_data.second_name;
+                        this.form.third_name = response.data.data.client_personal_data.third_name;
+                        this.form.gender = response.data.data.client_personal_data.gender;
+                        this.form.phone = response.data.data.client_personal_data.phone;
+                        this.form.address = response.data.data.client_personal_data.address;
 
-                        console.log(this.form)
+                        this.form.cars.splice(0,1);
+
+                        for(var i=0; i < response.data.data.client_cars.length; i++){
+                            this.form.cars.push({
+                                'brand' : response.data.data.client_cars[i].brand,
+                                'model' : response.data.data.client_cars[i].model,
+                                'color' : response.data.data.client_cars[i].color,
+                                'license_plate' : response.data.data.client_cars[i].license_plate
+                            });
+                        }
                     }
                     else{
                         console.log(response.data.errors);
                     }
                 });
         }
-
     },
 
     methods : {
@@ -232,19 +249,27 @@ export default {
                 });
         },
 
-        editClientPersonalData(){
-            //редактирование клиента
+        editClient(){
+            axios.post('/edit_client', this.form)
+            .then(response=>{
+                if(response.data.success){
+                    console.log(response.data)
+                }
+                else{
+
+                }
+            });
         },
 
         btnReactionSwitcher(){
             //Переключение поведения компонента
             switch (this.component_mode){
                 case 'create' : {
-                    this.saveClientPersonalData()
+                    this.saveClient()
                 }
 
                 case 'edit' : {
-                    this.editClientPersonalData();
+                    this.editClient();
                 }
             }
         },
@@ -258,6 +283,8 @@ export default {
                     'license_plate' : null
                 }
             );
+
+            console.log(this.form.cars)
         },
 
         removeCarTemplate(index){
