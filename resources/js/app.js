@@ -13,8 +13,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 import AppComponent from './components/App';
 import ClientCompomemt from './components/client/Client';
-import ClientForm from "./components/client/ClientForm";
-import CarForm from "./components/client/CarForm";
 
 require('./bootstrap');
 
@@ -37,8 +35,6 @@ window.Vue = require('vue').default;
 Vue.component('multiselect', Multiselect);
 
 Vue.component('app-component', require('./components/App.vue').default);
-Vue.component('client_form', require('./components/client/ClientForm').default);
-Vue.component('car_form', require('./components/client/CarForm').default);
 
 const routes = [
     { path: '/', component: AppComponent },
