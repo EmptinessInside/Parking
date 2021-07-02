@@ -19,58 +19,7 @@ class ClientController extends Controller
         $this->clientsRepository = $clientsRepository;
     }
 
-    public function index(Request $request){
-
-        $errors = null;
-
-        $offset = (int)$request->offset;
-        $limit = (int)$request->limit;
-
-        return response()->json([
-            'success' => true,
-            'data' => $this->clientsRepository->allInBounds($offset, $limit),
-            'errors' => $errors
-        ]);
-
-    }
-
-    public function show(Request $request){
-
-        $success = true;
-        $response_data = null;
-        $errors = null;
-
-        $client_id = (int)$request->client_id;
-
-        $client = new Client();
-        $client_personal_data = $client->getClientById($client_id);
-        $client_cars = $client->getClientCars($client_id);
-
-        if(!empty($client_personal_data)){
-            $response_data = array(
-                'client_personal_data' => $client_personal_data ,
-                'client_cars' => $client_cars
-            );
-        }
-        else{
-            $success = false;
-            $errors = [
-                'client_personal_data' => [
-                    'Запрошенного клиента не существует.'
-                ]
-            ];
-        }
-
-        return response()->json([
-            'success' => $success,
-            'data' => $response_data,
-            'errors' => $errors
-        ]);
-
-    }
-
-    public function store(Request $request){
-
+    public function clientValidator(Request $request){
         //Валидация данных пользователя
 
         $customErrorMessages = [
@@ -106,6 +55,10 @@ class ClientController extends Controller
             $attributes
         );
 
+        return $validator;
+    }
+
+    public function carsValidator(Request $request){
         //Валидация данных о машинах
 
         //Сообщения об ошибках
@@ -182,6 +135,68 @@ class ClientController extends Controller
                 }
             }
         }
+
+        return array( 'cars_validator' => $validator_Cars, 'matches_groups' => $car_data_matches_arr);
+    }
+
+    public function index(Request $request){
+
+        $errors = null;
+
+        $offset = (int)$request->offset;
+        $limit = (int)$request->limit;
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->clientsRepository->allInBounds($offset, $limit),
+            'errors' => $errors
+        ]);
+
+    }
+
+    public function show(Request $request){
+
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        $client_id = (int)$request->client_id;
+
+        $client = new Client();
+        $client_personal_data = $client->getClientById($client_id);
+        $client_cars = $client->getClientCars($client_id);
+
+        if(!empty($client_personal_data)){
+            $response_data = array(
+                'client_personal_data' => $client_personal_data ,
+                'client_cars' => $client_cars
+            );
+        }
+        else{
+            $success = false;
+            $errors = [
+                'client_personal_data' => [
+                    'Запрошенного клиента не существует.'
+                ]
+            ];
+        }
+
+        return response()->json([
+            'success' => $success,
+            'data' => $response_data,
+            'errors' => $errors
+        ]);
+
+    }
+
+    public function store(Request $request){
+
+        //Валидатор пользователя
+        $validator = $this->clientValidator($request);
+
+        $validator_c = $this->carsValidator($request);
+        $validator_Cars = $validator_c['cars_validator'];
+        $car_data_matches_arr = $validator_c['matches_groups'];
 
 
         //Возвращение ответа об ошибке
