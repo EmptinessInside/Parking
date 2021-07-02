@@ -7,14 +7,14 @@
             <button class="btn btn-primary" @click="createClient">+ Добавить клиента</button>
         </div>
         <div>
-            <div class="card mb-2" v-for="client in clients">
+            <div class="card mb-2" v-for="(client, index) in clients">
                 <div class="card-body d-flex align-items-center justify-content-center">
                     <p class="col-3 mb-0 ml-4">{{ client.second_name + ' ' + client.first_name + ' ' + client.third_name }}</p>
                     <p class="col-3 mb-0">{{ client.brand + ' / ' + client.model }}</p>
                     <p class="col-2 text-center mb-0">{{ client.license_plate }}</p>
                     <div class="col-4 text-right">
                         <button class="btn btn-primary" @click="editClient(client.id)">Редактировать</button>
-                        <button class="btn btn-danger ml-2" @click="removeClientAuto(client.car_id)">Удалить</button>
+                        <button class="btn btn-danger ml-2" @click="removeClientAuto(client.id, client.car_id, index)">Удалить</button>
                     </div>
                 </div>
             </div>
@@ -152,8 +152,13 @@
                 this.$router.push('/edit_client/client/' + record_id);
             },
 
-            removeClientAuto(record_id){
-                alert('remove' + record_id);
+            removeClientAuto(client_id, car_id, record_id){
+                axios.post('/remove_car', { client_id : client_id, car_id : car_id })
+                    .then(response=>{
+                       if(response.data.success){
+                           this.getClients();
+                       }
+                    });
             },
 
             changePage(page_number){
