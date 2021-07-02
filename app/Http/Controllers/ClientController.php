@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\CarsRepository;
 use App\Repositories\Interfaces\ClientsRepositoryInterface;
 use App\Models\Car;
 use App\Models\Client;
@@ -21,6 +22,8 @@ class ClientController extends Controller
 
     public function clientValidator(Request $request){
         //Валидация данных пользователя
+
+        $client_id = isset($request->id) ? ','. $request->id : '';
 
         $customErrorMessages = [
             'required' => 'Поле :attribute обязательно для заполнения.',
@@ -48,7 +51,7 @@ class ClientController extends Controller
                 'second_name' => 'required|string|max:50|min:3',
                 'third_name' => 'string|max:50|nullable',
                 'gender' => 'integer|between:0,1',
-                'phone' => 'string|size:11|unique:clients,phone',
+                'phone' => 'integer|max:99999999|unique:clients,phone'.$client_id,
                 'address' => 'string|max:255|nullable'
             ],
             $customErrorMessages,
@@ -85,6 +88,8 @@ class ClientController extends Controller
 
         //Валидация каждой машины
         foreach ($request->cars as $index => $car){
+            $car_id = isset($car['id']) ? ','. $car['id'] : '';
+
             //Валидации данных о машине
             $validator_car_tmp = Validator::make(
                 $car,
@@ -92,7 +97,7 @@ class ClientController extends Controller
                     'brand' => 'required|string|max:50',
                     'model' => 'required|string|max:50',
                     'color' => 'string|max:50',
-                    'license_plate' => 'string|size:6|unique:cars,license_plate',
+                    'license_plate' => 'string|size:6|unique:cars,license_plate'.$car_id,
                 ],
                 $customErrorMessages_Cars,
                 $attributes_Cars
@@ -191,9 +196,10 @@ class ClientController extends Controller
 
     public function store(Request $request){
 
-        //Валидатор пользователя
+        //Валидация клиента
         $validator = $this->clientValidator($request);
 
+        //Валидация машин клиента
         $validator_c = $this->carsValidator($request);
         $validator_Cars = $validator_c['cars_validator'];
         $car_data_matches_arr = $validator_c['matches_groups'];
@@ -253,5 +259,80 @@ class ClientController extends Controller
         }
 
         return $client_data_response;
+    }
+
+    public function edit(Request $request){
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        $client_id = (int)(isset($request->id) ? $request->id : 0);
+
+        //Валидация клиента
+        $validator = $this->clientValidator($request);
+
+        //Валидация машин клиента
+        $validator_c = $this->carsValidator($request);
+        $validator_Cars = $validator_c['cars_validator'];
+        $car_data_matches_arr = $validator_c['matches_groups'];
+
+        //Возвращение ответа об ошибке
+        if ( !empty($validator->fails()) || !empty($validator_Cars) || !empty($car_data_matches_arr)) {
+
+            if(!empty($validator->fails())){
+                $errors['client'] = $validator->messages();
+            }
+
+            if(!empty($validator_Cars)){
+                $errors['cars'] = $validator_Cars;
+            }
+
+            if( !empty($car_data_matches_arr) ){
+                $errors['cars_duplicate_groups'] = $car_data_matches_arr;
+            }
+
+            return response()->json([
+                'success' => false,
+                'errors' => $errors
+            ]);
+        }
+
+        $client_data = $request;
+
+        $client_data['first_name'] = addslashes(htmlspecialchars($request->first_name));
+        $client_data['second_name'] = addslashes(htmlspecialchars($request->second_name));
+        $client_data['third_name'] = addslashes(htmlspecialchars($request->third_name));
+        $client_data['gender'] = (int)$request->gender;
+        $client_data['phone'] = addslashes(htmlspecialchars($request->phone));
+        $client_data['address'] = addslashes(htmlspecialchars($request->address));
+
+        $client = new Client();
+
+        $client_data_response = $client->updateClient($client_data);
+
+        if(!json_decode($client_data_response->original['success'])){
+            return $client_data_response;
+        }
+
+        $cars_response = [];
+        $cars_array = [];
+
+        //Создание машин и привязка ее к клиенту
+        foreach ($request->cars as $index => $car){
+            $car_data = $car;
+            $car_data['brand'] = addslashes(htmlspecialchars($car['brand']));
+            $car_data['model'] = addslashes(htmlspecialchars($car['model']));
+            $car_data['color'] = addslashes(htmlspecialchars($car['color']));
+            $car_data['license_plate'] = addslashes(htmlspecialchars($car['license_plate']));
+            $car_data['owner'] = $request->id;
+
+            $cars_array[] = $car_data;
+        }
+
+        $client->updateClientCars($cars_array, $client_id);
+
+        return $client_data_response;
+
+        //Функция редактирования
     }
 }
