@@ -28,11 +28,13 @@ class ClientController extends Controller
         $customErrorMessages = [
             'required' => 'Поле :attribute обязательно для заполнения.',
             'between:0,1' => 'Поле :attribute должно иметь значение от 0 до 1000000 символов.',
-            'max' => 'Максимальная длина поля :attribute дожна быть не больше :max.',
+            'max' => 'Максимальное значение поля :attribute дожна быть не больше :max.',
+            'min' => 'Минимальное значение поля :attribute дожна быть не меньше :min.',
             'integer' => 'Поле :attribute должно быть числом.',
             'unique' => 'Данный :attribute уже зарегистрирован в системе.',
             'string' => 'Поле :attribute должно быть строкой.',
-            'size' => 'Поле :attribute должно иметь длину :size.'
+            'size' => 'Поле :attribute должно иметь длину :size.',
+            'numeric' => 'Поле :attribute не может быть строкой.'
         ];
 
         $attributes = [
@@ -51,7 +53,7 @@ class ClientController extends Controller
                 'second_name' => 'required|string|max:50|min:3',
                 'third_name' => 'string|max:50|nullable',
                 'gender' => 'integer|between:0,1',
-                'phone' => 'integer|max:99999999|unique:clients,phone'.$client_id,
+                'phone' => 'numeric|min:11|unique:clients,phone'.$client_id,
                 'address' => 'string|max:255|nullable'
             ],
             $customErrorMessages,
