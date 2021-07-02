@@ -22,7 +22,7 @@ class ClientsRepository implements ClientsRepositoryInterface
             ->select(
                 'clients.*',
                 'cars.brand as brand',
-                'cars.model as cars.model',
+                'cars.model as model',
                 'cars.license_plate as license_plate',
                 'cars.id as car_id'
             )
