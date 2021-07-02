@@ -22,12 +22,12 @@
         </div>
         <div id="pagination">
             <div class="d-flex align-items-center">
-                <div class="mr-2 pagination__btn pagination__btn-prev">Назад</div>
-                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 0" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == 1}">{{this.pagination.btns.prev_prev}}</div>
-                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 1" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == 2}">{{this.pagination.btns.prev}}</div>
-                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 2" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.btns.cur }">{{this.pagination.btns.cur}}</div>
-                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 3" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.pages - 1 }">{{this.pagination.btns.next}}</div>
-                <div class="mr-2 pagination__btn-number" v-if="pagination.pages > 4" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.pages }">{{this.pagination.btns.next_next}}</div>
+                <div class="mr-2 pagination__btn pagination__btn-prev" @click="prevPage">Назад</div>
+                <div class="mr-2 pagination__btn-number" @click="changePage(pagination.btns.prev_prev)" v-if="pagination.pages > 0" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == 1}">{{this.pagination.btns.prev_prev}}</div>
+                <div class="mr-2 pagination__btn-number" @click="changePage(pagination.btns.prev)" v-if="pagination.pages > 1" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == 2}">{{this.pagination.btns.prev}}</div>
+                <div class="mr-2 pagination__btn-number" @click="changePage(pagination.btns.cur)" v-if="pagination.pages > 2" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.btns.cur }">{{this.pagination.btns.cur}}</div>
+                <div class="mr-2 pagination__btn-number" @click="changePage(pagination.btns.next)" v-if="pagination.pages > 3" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.pages - 1 }">{{this.pagination.btns.next}}</div>
+                <div class="mr-2 pagination__btn-number" @click="changePage(pagination.btns.next_next)" v-if="pagination.pages > 4" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == this.pagination.pages }">{{this.pagination.btns.next_next}}</div>
                 <div class="pagination__btn pagination__btn-next" @click="nextPage">Вперед</div>
             </div>
         </div>
@@ -42,7 +42,7 @@
                 errors : null,
 
                 pagination : {
-                    page_item_limit : 10,
+                    page_item_limit : 2,
                     pages : 2,
                     current_page : 1,
                     btns : {
@@ -63,52 +63,71 @@
         methods : {
 
             getClients(){
-                if(this.pagination.current_page <= this.pagination.pages ){
-                    axios.get('/get-cars-count')
-                        .then(response=>{
-                            if(response.data.success){
-                                this.pagination.pages = Math.ceil(response.data.cars_count / this.pagination.page_item_limit) ;
 
-                                axios.post('/clients_list', { 'offset' : (this.pagination.current_page - 1) * this.pagination.page_item_limit , 'limit' : this.pagination.page_item_limit} )
-                                    .then( response=>{
-                                        this.clients = response.data.data;
-                                    });
+                axios.get('/get-cars-count')
+                    .then(response=>{
+                        if(response.data.success){
+                            this.pagination.pages = Math.ceil(response.data.cars_count / this.pagination.page_item_limit) ;
 
-                                if(this.pagination.current_page <= 5){
-                                    this.pagination.btns.prev_prev = 1;
-                                    this.pagination.btns.prev = 2;
-                                    this.pagination.btns.cur = 3;
-                                    this.pagination.btns.next = 4;
-                                    this.pagination.btns.next_next = 5;
-                                }
-                                else if (this.pagination.pages - this.pagination.current_page >=2){
-                                    this.pagination.btns.prev_prev = this.pagination.current_page - 2;
-                                    this.pagination.btns.prev = this.pagination.current_page - 1;
-                                    this.pagination.btns.cur = this.pagination.current_page;
-                                    this.pagination.btns.next = this.pagination.current_page + 1;
-                                    this.pagination.btns.next_next = this.pagination.current_page + 2;
-                                }
-                                else if (this.pagination.pages - this.pagination.current_page == 1){
-                                    this.pagination.btns.prev_prev = this.pagination.current_page - 3;
-                                    this.pagination.btns.prev = this.pagination.current_page - 2;
-                                    this.pagination.btns.cur = this.pagination.current_page - 1;
-                                    this.pagination.btns.next = this.pagination.current_page;
-                                    this.pagination.btns.next_next = this.pagination.current_page + 1;
-                                }
-                                else if (this.pagination.pages - this.pagination.current_page == 0){
-                                    this.pagination.btns.prev_prev = this.pagination.current_page - 4;
-                                    this.pagination.btns.prev = this.pagination.current_page - 3;
-                                    this.pagination.btns.cur = this.pagination.current_page - 2;
-                                    this.pagination.btns.next = this.pagination.current_page - 1;
-                                    this.pagination.btns.next_next = this.pagination.current_page;
-                                }
+                            if(this.$route.query.page < 1 || !this.$route.query.page){
+                                this.pagination.current_page = 1;
+                                this.$router.push('/?page=1')
                             }
-                            else{
-                                console.log(response.data);
+                            else if(this.$route.query.page > this.pagination.pages) {
+                                this.pagination.current_page = this.pagination.pages;
+                                this.$router.push('/?page=' + this.pagination.pages)
                             }
+                            else
+                                this.pagination.current_page = this.$route.query.page;
 
-                        });
-                }
+
+
+                            if(this.pagination.current_page > this.pagination.pages )
+                                this.pagination.current_page = this.pagination.pages;
+
+                            if(this.pagination.current_page < 1)
+                                this.pagination.current_page = 1;
+
+                            axios.post('/clients_list', { 'offset' : (this.pagination.current_page - 1) * this.pagination.page_item_limit , 'limit' : this.pagination.page_item_limit} )
+                                .then( response=>{
+                                    this.clients = response.data.data;
+                                });
+
+                            if(this.pagination.current_page <= 5){
+                                this.pagination.btns.prev_prev = 1;
+                                this.pagination.btns.prev = 2;
+                                this.pagination.btns.cur = 3;
+                                this.pagination.btns.next = 4;
+                                this.pagination.btns.next_next = 5;
+                            }
+                            else if (this.pagination.pages - this.pagination.current_page >=2){
+                                this.pagination.btns.prev_prev = this.pagination.current_page - 2;
+                                this.pagination.btns.prev = this.pagination.current_page - 1;
+                                this.pagination.btns.cur = this.pagination.current_page;
+                                this.pagination.btns.next = this.pagination.current_page + 1;
+                                this.pagination.btns.next_next = this.pagination.current_page + 2;
+                            }
+                            else if (this.pagination.pages - this.pagination.current_page == 1){
+                                this.pagination.btns.prev_prev = this.pagination.current_page - 3;
+                                this.pagination.btns.prev = this.pagination.current_page - 2;
+                                this.pagination.btns.cur = this.pagination.current_page - 1;
+                                this.pagination.btns.next = this.pagination.current_page;
+                                this.pagination.btns.next_next = this.pagination.current_page + 1;
+                            }
+                            else if (this.pagination.pages - this.pagination.current_page == 0){
+                                this.pagination.btns.prev_prev = this.pagination.current_page - 4;
+                                this.pagination.btns.prev = this.pagination.current_page - 3;
+                                this.pagination.btns.cur = this.pagination.current_page - 2;
+                                this.pagination.btns.next = this.pagination.current_page - 1;
+                                this.pagination.btns.next_next = this.pagination.current_page;
+                            }
+                        }
+                        else{
+                            console.log(response.data);
+                        }
+
+                    });
+
             },
 
             createClient(){
@@ -124,16 +143,28 @@
             },
 
             changePage(page_number){
+                if(page_number != this.pagination.current_page){
+                    this.pagination.current_page = page_number;
+                    this.$router.push('/?page=' + page_number);
+                    this.getClients();
+                }
 
             },
 
             nextPage(){
-                this.pagination.pages == this.pagination.current_page ? '' : this.pagination.current_page++;
-                this.getClients();
+                if(this.pagination.pages > this.pagination.current_page){
+                    this.pagination.current_page++;
+                    this.$router.push('/?page=' + this.pagination.current_page);
+                    this.getClients();
+                }
             },
 
             prevPage(){
-
+                if(this.pagination.current_page != 1){
+                    this.pagination.current_page--;
+                    this.$router.push('/?page=' + this.pagination.current_page);
+                    this.getClients();
+                }
             }
         }
     }
