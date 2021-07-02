@@ -22,4 +22,5 @@ Route::post('/get_client_data', [\App\Http\Controllers\ClientController::class, 
 Route::post('/clients_list', [\App\Http\Controllers\ClientController::class, 'index']);
 Route::post('/edit_client', [\App\Http\Controllers\ClientController::class, 'edit']);
 
-Route::get('/get-cars-count', [\App\Http\Controllers\CarController::class, 'CarsCount']);
+Route::get('/get-cars-count', [\App\Http\Controllers\CarController::class, 'cars_count']);
+Route::post('/remove_car', [\App\Http\Controllers\CarController::class, 'remove']);
