@@ -34,6 +34,41 @@ class ClientController extends Controller
 
     }
 
+    public function show(Request $request){
+
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        $client_id = (int)$request->client_id;
+
+        $client = new Client();
+        $client_personal_data = $client->getClientById($client_id);
+        $client_cars = $client->getClientCars($client_id);
+
+        if(!empty($client_personal_data)){
+            $response_data = array(
+                'client_personal_data' => $client_personal_data ,
+                'client_cars' => $client_cars
+            );
+        }
+        else{
+            $success = false;
+            $errors = [
+                'client_personal_data' => [
+                    'Запрошенного клиента не существует.'
+                ]
+            ];
+        }
+
+        return response()->json([
+            'success' => $success,
+            'data' => $response_data,
+            'errors' => $errors
+        ]);
+
+    }
+
     public function store(Request $request){
 
         //Валидация данных пользователя

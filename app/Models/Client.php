@@ -51,4 +51,49 @@ class Client extends Model
            'errors' => $errors,
         ]);
     }
+
+    /**
+     * Получение клиента по его id
+     *
+     * @param  int  $client_id
+     *
+     * @return object
+     */
+    public function getClientById(int $client_id){
+
+        $client = DB::table('clients')
+            ->where('clients.id', '=', $client_id)
+            ->select(
+                'first_name',
+                'second_name',
+                'third_name',
+                'gender',
+                'phone',
+                'address'
+            )
+            ->limit(1)
+            ->get();
+
+        return count($client) ? $client[0] : null;
+    }
+
+    /**
+     * Получение машин клиента
+     *
+     * @param  int  $client_id
+     *
+     * @return object
+     */
+    public function getClientCars(int $client_id){
+
+        return DB::table('cars')
+            ->where('cars.owner', '=', $client_id)
+            ->select(
+                'brand',
+                'model',
+                'color',
+                'license_plate'
+            )
+            ->get();
+    }
 }

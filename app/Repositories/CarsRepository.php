@@ -16,4 +16,6 @@ class CarsRepository implements CarsRepositoryInterface
             ->select(DB::raw('count(*) as cars_count'))
             ->get()[0]->cars_count;
     }
+
+
 }

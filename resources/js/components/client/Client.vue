@@ -131,7 +131,7 @@
         </div>
     </div>
 
-    <button class="btn btn-primary mt-4" @click="saveClient">Сохранить</button>
+    <button class="btn btn-primary mt-4" @click="btnReactionSwitcher">Сохранить</button>
 </div>
 </template>
 
@@ -159,7 +159,7 @@ export default {
             },
             errors : null,
             success_added : false,
-            success_message : 'Клиент успешно добавлен! Теперь вы можете добавить к клиенту его машины.',
+            success_messages : 'Клиент успешно добавлен! Теперь вы можете добавить к клиенту его машины.',
             component_mode : 'create',
 
             cars : {
@@ -180,7 +180,22 @@ export default {
     },
 
     mounted() {
+        if(this.$route.params.client_id){
+            this.component_mode = 'edit';
 
+            axios.post('/get_client_data', { client_id : parseInt(this.$route.params.client_id)})
+                .then(response=>{
+                    if(response.data.success){
+                        this.form = response.data.data.client_personal_data;
+                        this.form.cars = response.data.data.client_cars;
+
+                        console.log(this.form)
+                    }
+                    else{
+                        console.log(response.data.errors);
+                    }
+                });
+        }
 
     },
 

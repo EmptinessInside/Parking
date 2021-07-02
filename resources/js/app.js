@@ -42,20 +42,8 @@ Vue.component('car_form', require('./components/client/CarForm').default);
 
 const routes = [
     { path: '/', component: AppComponent },
-    { path : '/create_client', component : ClientCompomemt , children: [
-            {
-                path: 'client_form',
-                components : {
-                    client_form : ClientForm
-                },
-            },
-            {
-                path: 'car_form',
-                components : {
-                    car_form : CarForm
-                },
-            },
-        ]},
+    { path : '/create_client', component : ClientCompomemt },
+    { path : '/edit_client/client/:client_id', component: ClientCompomemt }
 
 ]
 

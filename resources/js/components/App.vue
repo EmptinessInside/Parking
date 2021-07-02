@@ -135,7 +135,7 @@
             },
 
             editClient(record_id){
-                alert('edit' + record_id);
+                this.$router.push('/edit_client/client/' + record_id);
             },
 
             removeClientAuto(record_id){
