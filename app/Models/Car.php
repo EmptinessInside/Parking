@@ -43,4 +43,20 @@ class Car extends Model
             'errors' => $errors,
         ]);
     }
+
+    public function removeCar($car_id){
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        DB::table('cars')
+            ->where('id', '=', $car_id)
+            ->delete();
+
+        return response()->json([
+            'success' => $success,
+            'data' => $response_data,
+            'errors' => $errors,
+        ]);
+    }
 }

@@ -165,4 +165,20 @@ class Client extends Model
             'errors' => $errors,
         ]);
     }
+
+    public function removeClient($client_id){
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        DB::table('clients')
+            ->where('id', '=', $client_id)
+            ->delete();
+
+        return response()->json([
+            'success' => $success,
+            'data' => $response_data,
+            'errors' => $errors,
+        ]);
+    }
 }
