@@ -42,7 +42,7 @@
                     <p class="col-3 mb-0">{{ parked_car.brand + ' / ' + parked_car.model }}</p>
                     <p class="col-2 text-center mb-0">{{ parked_car.license_plate }}</p>
                     <div class="col-4 text-right" >
-                        <button class="btn btn-success" @click="changeCarPlacedStatus(parked_car.id, parked_car.car_id, parked_car.placed)">{{ parked_car.placed ? 'Вывести' : 'Разместить'}}</button>
+                        <button class="btn " v-bind:class="{ 'btn-secondary' : parked_car.placed,  'btn-success' : !parked_car.placed }" @click="changeCarPlacedStatus(parked_car.id, parked_car.car_id, parked_car.placed)">{{ parked_car.placed ? 'Вывести' : 'Разместить'}}</button>
                     </div>
                 </div>
             </div>
