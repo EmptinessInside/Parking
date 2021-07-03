@@ -1,9 +1,12 @@
 <template>
     <div>
-        <div>
-            <h1>Все клиенты</h1>
+        <div class="d-flex mb-4 align-items-center">
+            <h1 class="col-2 pl-0">Все клиенты</h1>
+            <div class="col-2 offset-8 text-right pr-0">
+                <router-link class="btn btn-info" to="/parking_list">Войти на парковку</router-link>
+            </div>
         </div>
-        <div class="mb-4 text-right">
+        <div class="mb-4 text-left">
             <button class="btn btn-primary" @click="createClient">+ Добавить клиента</button>
         </div>
         <div>
