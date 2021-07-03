@@ -4,7 +4,7 @@
             <h1 class="mb-4">Парковка</h1>
         </div>
         <div class="mb-4 text-left d-flex mt-4">
-            <div class="col-2">
+            <div class="col-2 pl-0">
                 <multiselect
                     v-model="form.client"
                     label="name"
@@ -16,10 +16,11 @@
                     :close-on-select="true"
                     @input="resetCarsSelects"
                 />
+                <p class="mb-0 mu-title">Клиент</p>
             </div>
 
-            <div class="ml-3 col-2 pl-0">
-                <multiselect v-if="this.form.client != null"
+            <div class="ml-3 col-2 pl-0" v-if="this.form.client != null">
+                <multiselect
                     v-model="form.car"
                     label="name"
                     track-by="code"
@@ -30,6 +31,7 @@
                     :close-on-select="true"
                     @input="showPlacedBtn"
                 />
+                <p class="mb-0 mu-title">Авто</p>
             </div>
 
 
@@ -206,6 +208,18 @@ Items list style
 
 .not_placed_car_card{
     background-color: #80808021;
+}
+
+/*
+Input label
+*/
+.mu-title{
+    position: absolute;
+    top: -9px;
+    left: 13px;
+    font-size: 14px;
+    color: #a7a7a7;
+    background-color: white;
 }
 
 
