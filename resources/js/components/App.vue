@@ -23,7 +23,7 @@
             </div>
 
         </div>
-        <div id="pagination">
+        <div id="pagination" v-if="clients.length > 0">
             <div class="d-flex align-items-center">
                 <div class="mr-2 pagination__btn pagination__btn-prev" @click="prevPage">Назад</div>
                 <div class="mr-2 pagination__btn-number" @click="changePage(pagination.btns.prev_prev)" v-if="pagination.pages > 0" v-bind:class="{'pagination__btn-number__active' : this.pagination.current_page == 1}">{{this.pagination.btns.prev_prev}}</div>
