@@ -23,7 +23,7 @@ class ClientsRepository implements ClientsRepositoryInterface
                 'cars.id as car_id',
                 'cars.placed as placed'
             )
-            ->orderBy('cars.placed', 'asc')
+            ->orderBy('cars.placed', 'desc')
             ->get();
     }
 

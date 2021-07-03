@@ -36,13 +36,13 @@
             <button class="btn btn-primary ml-3" @click="bindPlaceClientCar(form.client.code, form.car.code)" v-if="change_car_laceed_name != null">{{change_car_laceed_name}}</button>
         </div>
         <div>
-            <div class="card mb-2" v-for="(parked_car, index) in parked_cars" >
+            <div class="card mb-2" v-for="(parked_car, index) in parked_cars" v-bind:class="{'placed_car_card': parked_car.placed, 'not_placed_car_card' : !parked_car.placed}">
                 <div class="card-body d-flex align-items-center justify-content-center">
                     <p class="col-3 mb-0 ml-4">{{ parked_car.second_name + ' ' + parked_car.first_name + ' ' + parked_car.third_name }}</p>
                     <p class="col-3 mb-0">{{ parked_car.brand + ' / ' + parked_car.model }}</p>
                     <p class="col-2 text-center mb-0">{{ parked_car.license_plate }}</p>
                     <div class="col-4 text-right" >
-                        <button class="btn btn-success" @click="changeCarPlacedStatus(parked_car.car_id)">Разместить</button>
+                        <button class="btn btn-success" @click="changeCarPlacedStatus(parked_car.id, parked_car.car_id, parked_car.placed)">{{ parked_car.placed ? 'Вывести' : 'Разместить'}}</button>
                     </div>
                 </div>
             </div>
@@ -101,6 +101,9 @@ export default {
             axios.get('/get_all_clients')
                 .then(response=>{
                     if(response.data.success){
+
+                        this.clients_options = [];
+
                         $.each(response.data.data, (index, v)=>{
                            this.clients_options.push({ name : v.second_name + ' ' + v.first_name + ' ' + v.third_name , code : v.id});
 
@@ -118,12 +121,22 @@ export default {
                 });
         },
 
-        changeCarPlacedStatus(car_id){
-            axios.post('/change_car_placed_status', { car_id : car_id})
+        changeCarPlacedStatus(client_id, car_id, status){
+            let place_url = '';
+            if(!status)
+                place_url = '/place_client_car';
+            else
+                place_url = '/replace_client_car';
+
+            axios.post(place_url, { client_id : client_id, car_id : car_id})
                 .then(response=>{
                     if(response.data.success){
                         this.errors = null;
-
+                        this.getAllCars();
+                        this.getAllClients();
+                        this.resetCarsSelects();
+                        this.form.car = null;
+                        this.change_car_laceed_name = null;
                     }
                     else{
                         this.errors = response.data.errors;
@@ -134,7 +147,7 @@ export default {
         bindPlaceClientCar(client_id, car_id){
 
             let place_url = '';
-            if(this.change_car_laceed_name == 'Разместить')
+            if(!this.form.car.car_status)
                 place_url = '/place_client_car';
             else
                 place_url = '/replace_client_car';
@@ -145,10 +158,13 @@ export default {
                        this.errors = null;
                        this.getAllCars();
                        this.getAllClients();
+                       this.resetCarsSelects();
+                       this.form.car = null;
+                       this.change_car_laceed_name = null;
 
-                       this.form.car.car_status = !this.form.car.car_status;
+                       //this.form.car.car_status = !this.form.car.car_status;
 
-                       this.showPlacedBtn();
+                       //this.showPlacedBtn();
                    }
                    else{
                        this.errors = response.data.errors;
@@ -181,47 +197,16 @@ export default {
 
 <style scoped>
 /*
-Pagination block styles
+Items list style
 */
 
-#pagination{
-    margin-top: 30px;
+.placed_car_card{
+    border: 1px solid #28a745;
 }
 
-.pagination__btn{
-    border-radius: 20px;
-    padding: 6px 15px;
-    width: 90px;
-    text-align: center;
-    cursor: pointer;
+.not_placed_car_card{
+    background-color: #80808021;
 }
 
-.pagination__btn-prev{
-    border: 1px solid #9a9a9a1f;
-    background-color: #cbc8c840;
-    color: black;
-}
 
-.pagination__btn-next{
-    background-color: #004085;
-    color: white;
-}
-
-.pagination__btn-number{
-    border-radius: 50%;
-    background-color: #cbc8c840;
-    color: black;
-    padding: 4px 10px;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.pagination__btn-number.pagination__btn-number__active{
-    background-color: #004085;
-    color: white;
-}
 </style>
