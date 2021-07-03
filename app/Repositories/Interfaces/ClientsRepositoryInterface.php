@@ -21,4 +21,12 @@ interface ClientsRepositoryInterface
      * @return array
      */
     public function allInBounds(int $offset, int $limit);
+
+
+    /**
+     * Получение списка клиентов в границах
+     *
+     * @return array
+     */
+    public function allClients();
 }

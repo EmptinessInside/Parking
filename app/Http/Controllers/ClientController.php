@@ -350,4 +350,16 @@ class ClientController extends Controller
         ]);
 
     }
+
+    public function getAllClients(){
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        return response()->json([
+            'success' => $success,
+            'data' => $this->clientsRepository->allClients(),
+            'errors' => $errors
+        ]);
+    }
 }

@@ -28,12 +28,12 @@
                     :searchable="true"
                     :show-labels="false"
                     :close-on-select="true"
-
+                    @input="showPlacedBtn"
                 />
             </div>
 
 
-            <button class="btn btn-primary ml-3" @click="placeClientCar(form.client_id, form.car_id)">Разместить</button>
+            <button class="btn btn-primary ml-3" @click="bindPlaceClientCar(form.client.code, form.car.code)" v-if="change_car_laceed_name != null">{{change_car_laceed_name}}</button>
         </div>
         <div>
             <div class="card mb-2" v-for="(parked_car, index) in parked_cars" >
@@ -41,7 +41,7 @@
                     <p class="col-3 mb-0 ml-4">{{ parked_car.second_name + ' ' + parked_car.first_name + ' ' + parked_car.third_name }}</p>
                     <p class="col-3 mb-0">{{ parked_car.brand + ' / ' + parked_car.model }}</p>
                     <p class="col-2 text-center mb-0">{{ parked_car.license_plate }}</p>
-                    <div class="col-4 text-right">
+                    <div class="col-4 text-right" >
                         <button class="btn btn-success" @click="changeCarPlacedStatus(parked_car.car_id)">Разместить</button>
                     </div>
                 </div>
@@ -69,29 +69,16 @@ export default {
             form : {
                 client : null,
                 car : null
-            }
+            },
+
+            change_car_laceed_name : null
 
         }
     },
 
     created() {
-
         this.getAllCars();
-
-        this.clients_options.push({ name : 'Акакий', code : 1 });
-        this.clients_options.push({ name : 'Марина', code : 2 });
-
-        this.clients_cars_options[1] = [];
-        this.clients_cars_options[2] = [];
-
-        this.clients_cars_options[1].push( { name : 'Lexus', code : 1 } );
-        this.clients_cars_options[1].push( { name : 'Заз', code : 2 } );
-        this.clients_cars_options[2].push( { name : 'Nissan', code : 3 } );
-        this.clients_cars_options[2].push( { name : 'Ваз', code : 4 } );
-        this.clients_cars_options[2].push( { name : 'Cherry', code : 5 } );
-
-        console.log(this.clients_options);
-        console.log(this.clients_cars_options);
+        this.getAllClients();
     },
 
     methods : {
@@ -103,8 +90,27 @@ export default {
                     if(response.data.success){
                         this.errors = null;
                         this.parked_cars = response.data.data;
+                    }
+                    else{
+                        this.errors = response.data.errors;
+                    }
+                });
+        },
 
-                        console.log(this.parked_cars)
+        getAllClients(){
+            axios.get('/get_all_clients')
+                .then(response=>{
+                    if(response.data.success){
+                        $.each(response.data.data, (index, v)=>{
+                           this.clients_options.push({ name : v.second_name + ' ' + v.first_name + ' ' + v.third_name , code : v.id});
+
+                            this.clients_cars_options[v.id] = [];
+
+                           $.each(this.parked_cars, (i, car) => {
+                               if(car.owner == car.id )
+                                   this.clients_cars_options[v.id].push( { name: car.model + '/' + car.brand, code : car.car_id, car_status : car.placed});
+                           });
+                        });
                     }
                     else{
                         this.errors = response.data.errors;
@@ -125,14 +131,24 @@ export default {
                 });
         },
 
-        placeClientCar(client_id, car_id){
+        bindPlaceClientCar(client_id, car_id){
 
-            console.log(this.form.client.code)
+            let place_url = '';
+            if(this.change_car_laceed_name == 'Разместить')
+                place_url = '/place_client_car';
+            else
+                place_url = '/replace_client_car';
 
-            axios.post('/place_client_car', { client_id : client_id, car_id : car_id })
+            axios.post(place_url, { client_id : client_id, car_id : car_id})
                 .then(response=>{
                    if(response.data.success){
                        this.errors = null;
+                       this.getAllCars();
+                       this.getAllClients();
+
+                       this.form.car.car_status = !this.form.car.car_status;
+
+                       this.showPlacedBtn();
                    }
                    else{
                        this.errors = response.data.errors;
@@ -144,7 +160,20 @@ export default {
 
         resetCarsSelects(){
             this.form.car = null;
-        }
+        },
+
+        showPlacedBtn(){
+            if(this.form.client != null && this.form.car!=null){
+                if(this.form.car.car_status){
+                    this.change_car_laceed_name = 'Вывести';
+                }
+                else{
+                    this.change_car_laceed_name = 'Разместить';
+                }
+
+            }
+        },
+
 
     }
 }

@@ -19,6 +19,7 @@ class ClientsRepository implements ClientsRepositoryInterface
                 'cars.brand as brand',
                 'cars.model as model',
                 'cars.license_plate as license_plate',
+                'cars.owner as owner',
                 'cars.id as car_id',
                 'cars.placed as placed'
             )
@@ -40,6 +41,11 @@ class ClientsRepository implements ClientsRepositoryInterface
             )
             ->offset($offset)
             ->limit($limit)
+            ->get();
+    }
+
+    public function allClients(){
+        return DB::table('clients')
             ->get();
     }
 
