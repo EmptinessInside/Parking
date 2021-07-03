@@ -12,7 +12,18 @@ class ClientsRepository implements ClientsRepositoryInterface
 
     public function all()
     {
-        // TODO: Implement all() method.
+        return DB::table('clients')
+            ->rightJoin('cars', 'clients.id', '=', 'cars.owner')
+            ->select(
+                'clients.*',
+                'cars.brand as brand',
+                'cars.model as model',
+                'cars.license_plate as license_plate',
+                'cars.id as car_id',
+                'cars.placed as placed'
+            )
+            ->orderBy('cars.placed', 'asc')
+            ->get();
     }
 
     public function allInBounds(int $offset, int $limit)
@@ -24,7 +35,8 @@ class ClientsRepository implements ClientsRepositoryInterface
                 'cars.brand as brand',
                 'cars.model as model',
                 'cars.license_plate as license_plate',
-                'cars.id as car_id'
+                'cars.id as car_id',
+                'cars.placed as placed'
             )
             ->offset($offset)
             ->limit($limit)

@@ -24,3 +24,5 @@ Route::post('/edit_client', [\App\Http\Controllers\ClientController::class, 'edi
 
 Route::get('/get-cars-count', [\App\Http\Controllers\CarController::class, 'cars_count']);
 Route::post('/remove_car', [\App\Http\Controllers\CarController::class, 'remove']);
+
+Route::get('/parked_cars_list', [\App\Http\Controllers\ClientController::class, 'showAllWithCars']);

@@ -335,6 +335,19 @@ class ClientController extends Controller
 
         return $client_data_response;
 
-        //Функция редактирования
+    }
+
+    public function showAllWithCars(){
+
+        $success = true;
+        $response_data = null;
+        $errors = null;
+
+        return response()->json([
+            'success' => $success,
+            'data' => $this->clientsRepository->all(),
+            'errors' => $errors
+        ]);
+
     }
 }

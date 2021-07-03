@@ -36,7 +36,7 @@
             <button class="btn btn-primary ml-3" @click="placeClientCar(form.client_id, form.car_id)">Разместить</button>
         </div>
         <div>
-            <div class="card mb-2" v-for="(parked_car, index) in parked_cars">
+            <div class="card mb-2" v-for="(parked_car, index) in parked_cars" >
                 <div class="card-body d-flex align-items-center justify-content-center">
                     <p class="col-3 mb-0 ml-4">{{ parked_car.second_name + ' ' + parked_car.first_name + ' ' + parked_car.third_name }}</p>
                     <p class="col-3 mb-0">{{ parked_car.brand + ' / ' + parked_car.model }}</p>
@@ -76,6 +76,8 @@ export default {
 
     created() {
 
+        this.getAllCars();
+
         this.clients_options.push({ name : 'Акакий', code : 1 });
         this.clients_options.push({ name : 'Марина', code : 2 });
 
@@ -95,12 +97,14 @@ export default {
     methods : {
 
         //Получение всех машин на парковке
-        getAllParkedCars(){
+        getAllCars(){
             axios.get('/parked_cars_list')
                 .then(response=>{
                     if(response.data.success){
                         this.errors = null;
+                        this.parked_cars = response.data.data;
 
+                        console.log(this.parked_cars)
                     }
                     else{
                         this.errors = response.data.errors;
