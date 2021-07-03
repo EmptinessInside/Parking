@@ -25,4 +25,12 @@ class CarsRepository implements CarsRepositoryInterface
             ->select(DB::raw('count(*) as cars_count'))
             ->get()[0]->cars_count;
     }
+
+
+    public function placedCars()
+    {
+        return DB::table('cars')
+            ->where('cars.places', '=', true)
+            ->get();
+    }
 }

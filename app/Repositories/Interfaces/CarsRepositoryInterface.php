@@ -24,4 +24,12 @@ interface CarsRepositoryInterface
      * @return integer
      */
     public function countOfClientCars(int $client_id);
+
+
+    /**
+     * Получение списка размещенных авто
+     *
+     * @return object
+     */
+    public function placedCars();
 }

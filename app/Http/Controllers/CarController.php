@@ -26,6 +26,16 @@ class CarController extends Controller
         ]);
     }
 
+    public function showPlaced(){
+        $errors = null;
+
+        return response()->json([
+            'success' => true,
+            'data' => $this->carsRepository->placedCars(),
+            'errors' => $errors
+        ]);
+    }
+
     public function remove(Request $request){
 
         $success = true;
@@ -47,7 +57,7 @@ class CarController extends Controller
 
         return response()->json([
             'success' => $success,
-            'cars_count' => $this->carsRepository->countOfAll(),
+            'data' => $this->carsRepository->countOfAll(),
             'errors' => $errors
         ]);
     }
