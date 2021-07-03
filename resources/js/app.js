@@ -13,6 +13,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 import AppComponent from './components/App';
 import ClientCompomemt from './components/client/Client';
+import ParkingListComponent from "./components/parking/ParkingList";
 
 require('./bootstrap');
 
@@ -39,7 +40,8 @@ Vue.component('app-component', require('./components/App.vue').default);
 const routes = [
     { path: '/', component: AppComponent },
     { path : '/create_client', component : ClientCompomemt },
-    { path : '/edit_client/client/:client_id', component: ClientCompomemt }
+    { path : '/edit_client/client/:client_id', component: ClientCompomemt },
+    { path : '/parking_list', component: ParkingListComponent },
 
 ]
 
