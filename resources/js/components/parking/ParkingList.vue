@@ -105,6 +105,7 @@ export default {
                     if(response.data.success){
 
                         this.clients_options = [];
+                        this.clients_cars_options = [];
 
                         $.each(response.data.data, (index, v)=>{
                            this.clients_options.push({ name : v.second_name + ' ' + v.first_name + ' ' + v.third_name , code : v.id});
@@ -112,7 +113,7 @@ export default {
                             this.clients_cars_options[v.id] = [];
 
                            $.each(this.parked_cars, (i, car) => {
-                               if(car.owner == car.id )
+                               if(car.owner == v.id )
                                    this.clients_cars_options[v.id].push( { name: car.model + '/' + car.brand, code : car.car_id, car_status : car.placed});
                            });
                         });
