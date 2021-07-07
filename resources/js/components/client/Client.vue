@@ -284,11 +284,13 @@ export default {
             //Переключение поведения компонента
             switch (this.component_mode){
                 case 'create' : {
-                    this.saveClient()
+                    this.saveClient();
+                    break;
                 }
 
                 case 'edit' : {
                     this.editClient();
+                    break;
                 }
             }
         },
