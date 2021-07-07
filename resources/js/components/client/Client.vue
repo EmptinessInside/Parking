@@ -123,7 +123,7 @@
                 <div class="remove-car-template-btn" v-if="form.cars.length > 1" @click="removeCarTemplate(i)">&#x2718;</div>
             </div>
 
-            <div id="car-add-btn" class="col-6 pl-2 pr-2 mb-3" @click="add_car">
+            <div id="car-add-btn" class="col-6 pl-2 pr-2 mb-3" @click="add_car" v-if="form.cars.length < 10">
                 <div class="add-car__template add-car__template-btn">
                     <p class="mb-0 add-car__template-title">Добавить машину +</p>
                 </div>
@@ -296,13 +296,14 @@ export default {
         },
 
         add_car(){
-            this.form.cars.push(
-                {
-                    'brand' : null,
-                    'model' : null,
-                    'color' : null,
-                    'license_plate' : null
-                }
+            if(this.form.cars.length < 10)
+                this.form.cars.push(
+                    {
+                        'brand' : null,
+                        'model' : null,
+                        'color' : null,
+                        'license_plate' : null
+                    }
             );
         },
 
