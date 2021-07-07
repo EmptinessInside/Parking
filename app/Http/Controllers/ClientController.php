@@ -53,7 +53,7 @@ class ClientController extends Controller
                 'second_name' => 'required|string|max:50|min:3',
                 'third_name' => 'string|max:50|nullable',
                 'gender' => 'integer|between:0,1',
-                'phone' => 'numeric|min:11|unique:clients,phone'.$client_id,
+                'phone' => 'numeric|min:10000000000|max:99999999999|unique:clients,phone'.$client_id,
                 'address' => 'string|max:255|nullable'
             ],
             $customErrorMessages,
