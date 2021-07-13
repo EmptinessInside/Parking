@@ -30,3 +30,7 @@ Route::get('/get_all_clients',  [\App\Http\Controllers\ClientController::class, 
 
 Route::post('/place_client_car',  [\App\Http\Controllers\ParkingController::class, 'placeClientCar']);
 Route::post('/replace_client_car',  [\App\Http\Controllers\ParkingController::class, 'replaceClientCar']);
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
